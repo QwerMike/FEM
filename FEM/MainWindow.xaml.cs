@@ -71,6 +71,9 @@ namespace FEM
                 series.Points.Add(new OxyPlot.DataPoint(i / (double)n, coefs[i]));
             }
             chart.Model.Series.Add(series);
+            foreach (var ax in chart.Model.Axes)
+                ax.Maximum = ax.Minimum = Double.NaN;
+            chart.ResetAllAxes();
             chart.InvalidatePlot();
         }
     }
