@@ -1,7 +1,6 @@
 ﻿using MathNet.Symbolics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FEM
 {
@@ -14,9 +13,19 @@ namespace FEM
             double q,
             int n)
         {
-            Expression T = Infix.ParseOrThrow(strT);
-            Expression s = Infix.ParseOrThrow(strS);
-            Expression f = Infix.ParseOrThrow(strF);
+            Expression T, s, f;
+
+            try
+            {
+                T = Infix.ParseOrThrow(strT);
+                s = Infix.ParseOrThrow(strS);
+                f = Infix.ParseOrThrow(strF);
+            }
+            catch (Exception ex)
+            {
+                throw new FunctionParseException("Failed to parse function", ex);
+            }
+
             double h = 1 / (double)n;
 
             var mainDiagonal = MainDiagonal(T, s, n);
@@ -141,5 +150,17 @@ namespace FEM
 
             return Evaluate.Evaluate(variables, expr).RealValue;
         }
+    }
+
+
+    [Serializable]
+    public class FunctionParseException : Exception
+    {
+        public FunctionParseException() { }
+        public FunctionParseException(string message) : base(message) { }
+        public FunctionParseException(string message, Exception inner) : base(message, inner) { }
+        protected FunctionParseException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }
