@@ -1,18 +1,7 @@
 ﻿using OxyPlot.Series;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FEM
 {
@@ -28,13 +17,46 @@ namespace FEM
 
         private void submit_Click(object sender, RoutedEventArgs e)
         {
-            var n = int.Parse(txtN.Text);
-            var coefs = FemSolve.Coeficients(
-                txtT.Text,
-                txtS.Text,
-                txtF.Text,
-                double.Parse(txtQ.Text),
-                n);
+            if (String.IsNullOrEmpty(txtT.Text) ||
+                String.IsNullOrEmpty(txtS.Text) ||
+                String.IsNullOrEmpty(txtF.Text) ||
+                String.IsNullOrEmpty(txtQ.Text) ||
+                String.IsNullOrEmpty(txtN.Text))
+            {
+                MessageBox.Show("Input cannot be empty");
+                return;
+            }
+
+            int n = 0;
+            double q = 0;
+
+            if (!int.TryParse(txtN.Text, out n) ||
+                !double.TryParse(txtQ.Text, out q))
+            {
+                MessageBox.Show("Failed to parse numeric values");
+                return;
+            }
+
+            List<double> coefs;
+            try
+            {
+                coefs = FemSolve.Coeficients(
+                    txtT.Text,
+                    txtS.Text,
+                    txtF.Text,
+                    double.Parse(txtQ.Text),
+                    n);
+            }
+            catch (FunctionParseException ex)
+            {
+                MessageBox.Show(ex.ToString());
+                return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
             updateChart(coefs);
         }

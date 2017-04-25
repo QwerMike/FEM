@@ -7,7 +7,7 @@ namespace FEM
     {
         public MainViewModel()
         {
-            this.MyModel = new PlotModel() { Title = "Un(x)" };
+            this.MyModel = new PlotModel();
             MyModel.Series.Add(new AreaSeries());
         }
 
